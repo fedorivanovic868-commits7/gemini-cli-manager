@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTranslationTitles, createTranslationTitle, updateTranslationTitle, deleteTranslationTitle, initializeDatabase } from '@/lib/db';
+import { getTranslationTitles, createTranslationTitle, updateTranslationTitle, deleteTranslationTitle, initializeDatabase, type TranslationTitle } from '@/lib/db';
 import { analyzeTextFile } from '@/lib/file-analyzer';
 
 export async function GET() {
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       title,
       totalChapters,
       translatedChapters,
-      status as any,
+      status as TranslationTitle['status'],
       fileName,
       fileCharCount,
       fileWordCount
@@ -118,7 +118,7 @@ export async function PUT(request: NextRequest) {
       title,
       totalChapters,
       translatedChapters,
-      status as any,
+      status as TranslationTitle['status'],
       fileName,
       fileCharCount,
       fileWordCount

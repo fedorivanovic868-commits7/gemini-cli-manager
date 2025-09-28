@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { LogOut, Server, BookOpen } from 'lucide-react';
 
@@ -31,7 +31,7 @@ export function DashboardLayout({ children, activeTab, onTabChange }: DashboardL
       } else {
         toast.error('Ошибка при выходе из системы');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при выходе');
     } finally {
       setIsLoggingOut(false);

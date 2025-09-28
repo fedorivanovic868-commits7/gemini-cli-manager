@@ -36,7 +36,7 @@ export default function LoginPage() {
       } else {
         toast.error(data.message || 'Ошибка входа');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при попытке входа');
     } finally {
       setIsLoading(false);

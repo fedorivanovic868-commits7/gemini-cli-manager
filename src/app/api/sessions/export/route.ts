@@ -49,7 +49,7 @@ ${session.variable}`;
     zip.file('session-metadata.json', JSON.stringify(metadata, null, 2));
     
     // Generate ZIP
-    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+    const zipBuffer = await zip.generateAsync({ type: 'blob' });
     
     // Create response with ZIP file
     const response = new NextResponse(zipBuffer);
