@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Add session data as data.txt
     const sessionData = `# Gemini CLI Session Data
 # Session Name: ${session.name}
-# Created: ${session.created_at}
+# Created: ${session.createdAt}
 # Status: ${session.status}
 
 ${session.variable}`;
@@ -42,7 +42,7 @@ ${session.variable}`;
     const metadata = {
       name: session.name,
       status: session.status,
-      created_at: session.created_at,
+      created_at: session.createdAt,
       exported_at: new Date().toISOString(),
     };
     

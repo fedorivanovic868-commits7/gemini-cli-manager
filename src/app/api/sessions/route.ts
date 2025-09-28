@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessions, createSession, updateSession, deleteSession, updateSessionStatus, initializeDatabase } from '@/lib/db';
+import { getSessions, createSession, updateSession, deleteSession, updateSessionStatus } from '@/lib/db';
 
 export async function GET() {
   try {
-    await initializeDatabase();
     const sessions = await getSessions();
     return NextResponse.json(sessions);
   } catch (error) {
@@ -26,7 +25,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    await initializeDatabase();
     const session = await createSession(name, variable);
     return NextResponse.json(session);
   } catch (error) {
@@ -49,7 +47,6 @@ export async function PUT(request: NextRequest) {
       );
     }
     
-    await initializeDatabase();
     
     if (status && !name && !variable) {
       // Only updating status
@@ -87,7 +84,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    await initializeDatabase();
     await deleteSession(parseInt(id));
     return NextResponse.json({ success: true });
   } catch (error) {

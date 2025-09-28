@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTranslationTitles, createTranslationTitle, updateTranslationTitle, deleteTranslationTitle, initializeDatabase, type TranslationTitle } from '@/lib/db';
+import { getTranslationTitles, createTranslationTitle, updateTranslationTitle, deleteTranslationTitle, type TranslationTitle } from '@/lib/db';
 import { analyzeTextFile } from '@/lib/file-analyzer';
 
 export async function GET() {
   try {
-    await initializeDatabase();
     const translations = await getTranslationTitles();
     return NextResponse.json(translations);
   } catch (error) {
@@ -53,7 +52,6 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    await initializeDatabase();
     const translation = await createTranslationTitle(
       title,
       totalChapters,
@@ -112,7 +110,6 @@ export async function PUT(request: NextRequest) {
       }
     }
     
-    await initializeDatabase();
     const translation = await updateTranslationTitle(
       id,
       title,
@@ -146,7 +143,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    await initializeDatabase();
     await deleteTranslationTitle(parseInt(id));
     return NextResponse.json({ success: true });
   } catch (error) {

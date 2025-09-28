@@ -375,7 +375,7 @@ export function SessionsTab() {
                   </div>
                 </div>
                 <CardDescription>
-                  Создано: {new Date(session.created_at).toLocaleDateString('ru-RU')}
+                  Создано: {new Date(session.createdAt).toLocaleDateString('ru-RU')}
                 </CardDescription>
               </CardHeader>
               <CardContent>

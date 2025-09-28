@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { resetExpiredQuotaSessions, initializeDatabase } from '@/lib/db';
+import { resetExpiredQuotaSessions } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    await initializeDatabase();
     await resetExpiredQuotaSessions();
     
     console.log('Cron job executed: Reset expired quota sessions');

@@ -151,8 +151,8 @@ export function TranslationsTab() {
     setEditingTranslation(translation);
     setFormData({
       title: translation.title,
-      totalChapters: translation.total_chapters,
-      translatedChapters: translation.translated_chapters,
+      totalChapters: translation.totalChapters,
+      translatedChapters: translation.translatedChapters,
       status: translation.status,
     });
     setSelectedFile(null);
@@ -305,7 +305,7 @@ export function TranslationsTab() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {translations.map((translation) => {
-            const progress = getProgressPercentage(translation.translated_chapters, translation.total_chapters);
+            const progress = getProgressPercentage(translation.translatedChapters, translation.totalChapters);
             return (
               <Card key={translation.id} className="relative">
                 <CardHeader>
@@ -313,7 +313,7 @@ export function TranslationsTab() {
                     <div className="flex-1">
                       <CardTitle className="text-lg pr-2 break-words">{translation.title}</CardTitle>
                       <CardDescription>
-                        Создано: {new Date(translation.created_at).toLocaleDateString('ru-RU')}
+                        Создано: {new Date(translation.createdAt).toLocaleDateString('ru-RU')}
                       </CardDescription>
                     </div>
                     <div className={`text-sm font-medium ${getStatusColor(translation.status)} flex-shrink-0`}>
@@ -336,28 +336,28 @@ export function TranslationsTab() {
                         />
                       </div>
                       <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                        <span>{translation.translated_chapters} переведено</span>
-                        <span>{translation.total_chapters} всего</span>
+                        <span>{translation.translatedChapters} переведено</span>
+                        <span>{translation.totalChapters} всего</span>
                       </div>
                     </div>
 
                     {/* File Analysis */}
-                    {translation.file_name && (
+                    {translation.fileName && (
                       <div className="bg-muted/50 p-3 rounded-lg">
                         <div className="flex items-center gap-2 mb-2">
                           <File className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">{translation.file_name}</span>
+                          <span className="text-sm font-medium">{translation.fileName}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                          {translation.file_char_count && (
+                          {translation.fileCharCount && (
                             <div>
                               <BarChart3 className="w-3 h-3 inline mr-1" />
-                              {translation.file_char_count.toLocaleString()} симв.
+                              {translation.fileCharCount.toLocaleString()} симв.
                             </div>
                           )}
-                          {translation.file_word_count && (
+                          {translation.fileWordCount && (
                             <div>
-                              {translation.file_word_count.toLocaleString()} слов
+                              {translation.fileWordCount.toLocaleString()} слов
                             </div>
                           )}
                         </div>

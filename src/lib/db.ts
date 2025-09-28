@@ -1,65 +1,43 @@
-import { sql } from '@vercel/postgres';
+import { prisma } from './prisma'
 
 export interface Session {
   id: number;
   name: string;
   variable: string;
   status: 'Свободно' | 'Используется' | 'Истекла квота';
-  created_at: string;
+  createdAt: Date;
 }
 
 export interface TranslationTitle {
   id: number;
   title: string;
   status: 'Нужен перевод' | 'В переводе' | 'Переведено';
-  total_chapters: number;
-  translated_chapters: number;
-  file_name?: string;
-  file_char_count?: number;
-  file_word_count?: number;
-  created_at: string;
-}
-
-export async function initializeDatabase() {
-  try {
-    // Create Sessions table
-    await sql`
-      CREATE TABLE IF NOT EXISTS sessions (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        variable TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'Свободно' CHECK (status IN ('Свободно', 'Используется', 'Истекла квота')),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    // Create TranslationTitles table
-    await sql`
-      CREATE TABLE IF NOT EXISTS translation_titles (
-        id SERIAL PRIMARY KEY,
-        title TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'Нужен перевод' CHECK (status IN ('Нужен перевод', 'В переводе', 'Переведено')),
-        total_chapters INTEGER NOT NULL DEFAULT 0,
-        translated_chapters INTEGER NOT NULL DEFAULT 0,
-        file_name TEXT,
-        file_char_count INTEGER,
-        file_word_count INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    console.log('Database initialized successfully');
-  } catch (error) {
-    console.error('Database initialization error:', error);
-    throw error;
-  }
+  totalChapters: number;
+  translatedChapters: number;
+  fileName?: string | null;
+  fileCharCount?: number | null;
+  fileWordCount?: number | null;
+  createdAt: Date;
 }
 
 // Session CRUD operations
 export async function getSessions(): Promise<Session[]> {
   try {
-    const { rows } = await sql`SELECT * FROM sessions ORDER BY created_at DESC`;
-    return rows as Session[];
+    const sessions = await prisma.session.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    return sessions.map((session: {
+      id: number;
+      name: string;
+      variable: string;
+      status: string;
+      createdAt: Date;
+    }) => ({
+      ...session,
+      status: session.status as Session['status']
+    }));
   } catch (error) {
     console.error('Error fetching sessions:', error);
     throw error;
@@ -68,12 +46,16 @@ export async function getSessions(): Promise<Session[]> {
 
 export async function createSession(name: string, variable: string): Promise<Session> {
   try {
-    const { rows } = await sql`
-      INSERT INTO sessions (name, variable)
-      VALUES (${name}, ${variable})
-      RETURNING *
-    `;
-    return rows[0] as Session;
+    const session = await prisma.session.create({
+      data: {
+        name,
+        variable,
+      }
+    });
+    return {
+      ...session,
+      status: session.status as Session['status']
+    };
   } catch (error) {
     console.error('Error creating session:', error);
     throw error;
@@ -82,13 +64,18 @@ export async function createSession(name: string, variable: string): Promise<Ses
 
 export async function updateSession(id: number, name: string, variable: string, status: Session['status']): Promise<Session> {
   try {
-    const { rows } = await sql`
-      UPDATE sessions 
-      SET name = ${name}, variable = ${variable}, status = ${status}
-      WHERE id = ${id}
-      RETURNING *
-    `;
-    return rows[0] as Session;
+    const session = await prisma.session.update({
+      where: { id },
+      data: {
+        name,
+        variable,
+        status
+      }
+    });
+    return {
+      ...session,
+      status: session.status as Session['status']
+    };
   } catch (error) {
     console.error('Error updating session:', error);
     throw error;
@@ -97,13 +84,14 @@ export async function updateSession(id: number, name: string, variable: string, 
 
 export async function updateSessionStatus(id: number, status: Session['status']): Promise<Session> {
   try {
-    const { rows } = await sql`
-      UPDATE sessions 
-      SET status = ${status}
-      WHERE id = ${id}
-      RETURNING *
-    `;
-    return rows[0] as Session;
+    const session = await prisma.session.update({
+      where: { id },
+      data: { status }
+    });
+    return {
+      ...session,
+      status: session.status as Session['status']
+    };
   } catch (error) {
     console.error('Error updating session status:', error);
     throw error;
@@ -112,7 +100,9 @@ export async function updateSessionStatus(id: number, status: Session['status'])
 
 export async function deleteSession(id: number): Promise<void> {
   try {
-    await sql`DELETE FROM sessions WHERE id = ${id}`;
+    await prisma.session.delete({
+      where: { id }
+    });
   } catch (error) {
     console.error('Error deleting session:', error);
     throw error;
@@ -121,11 +111,14 @@ export async function deleteSession(id: number): Promise<void> {
 
 export async function resetExpiredQuotaSessions(): Promise<void> {
   try {
-    await sql`
-      UPDATE sessions 
-      SET status = 'Свободно' 
-      WHERE status = 'Истекла квота'
-    `;
+    await prisma.session.updateMany({
+      where: {
+        status: 'Истекла квота'
+      },
+      data: {
+        status: 'Свободно'
+      }
+    });
   } catch (error) {
     console.error('Error resetting expired quota sessions:', error);
     throw error;
@@ -135,8 +128,25 @@ export async function resetExpiredQuotaSessions(): Promise<void> {
 // Translation CRUD operations
 export async function getTranslationTitles(): Promise<TranslationTitle[]> {
   try {
-    const { rows } = await sql`SELECT * FROM translation_titles ORDER BY created_at DESC`;
-    return rows as TranslationTitle[];
+    const translations = await prisma.translationTitle.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    return translations.map((translation: {
+      id: number;
+      title: string;
+      status: string;
+      totalChapters: number;
+      translatedChapters: number;
+      fileName?: string | null;
+      fileCharCount?: number | null;
+      fileWordCount?: number | null;
+      createdAt: Date;
+    }) => ({
+      ...translation,
+      status: translation.status as TranslationTitle['status']
+    }));
   } catch (error) {
     console.error('Error fetching translation titles:', error);
     throw error;
@@ -153,18 +163,21 @@ export async function createTranslationTitle(
   fileWordCount?: number
 ): Promise<TranslationTitle> {
   try {
-    const { rows } = await sql`
-      INSERT INTO translation_titles (
-        title, total_chapters, translated_chapters, status,
-        file_name, file_char_count, file_word_count
-      )
-      VALUES (
-        ${title}, ${totalChapters}, ${translatedChapters}, ${status},
-        ${fileName || null}, ${fileCharCount || null}, ${fileWordCount || null}
-      )
-      RETURNING *
-    `;
-    return rows[0] as TranslationTitle;
+    const translation = await prisma.translationTitle.create({
+      data: {
+        title,
+        totalChapters,
+        translatedChapters,
+        status,
+        fileName,
+        fileCharCount,
+        fileWordCount
+      }
+    });
+    return {
+      ...translation,
+      status: translation.status as TranslationTitle['status']
+    };
   } catch (error) {
     console.error('Error creating translation title:', error);
     throw error;
@@ -182,19 +195,22 @@ export async function updateTranslationTitle(
   fileWordCount?: number
 ): Promise<TranslationTitle> {
   try {
-    const { rows } = await sql`
-      UPDATE translation_titles 
-      SET title = ${title}, 
-          total_chapters = ${totalChapters}, 
-          translated_chapters = ${translatedChapters}, 
-          status = ${status},
-          file_name = ${fileName || null},
-          file_char_count = ${fileCharCount || null},
-          file_word_count = ${fileWordCount || null}
-      WHERE id = ${id}
-      RETURNING *
-    `;
-    return rows[0] as TranslationTitle;
+    const translation = await prisma.translationTitle.update({
+      where: { id },
+      data: {
+        title,
+        totalChapters,
+        translatedChapters,
+        status,
+        fileName,
+        fileCharCount,
+        fileWordCount
+      }
+    });
+    return {
+      ...translation,
+      status: translation.status as TranslationTitle['status']
+    };
   } catch (error) {
     console.error('Error updating translation title:', error);
     throw error;
@@ -203,7 +219,9 @@ export async function updateTranslationTitle(
 
 export async function deleteTranslationTitle(id: number): Promise<void> {
   try {
-    await sql`DELETE FROM translation_titles WHERE id = ${id}`;
+    await prisma.translationTitle.delete({
+      where: { id }
+    });
   } catch (error) {
     console.error('Error deleting translation title:', error);
     throw error;

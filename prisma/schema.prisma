@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  name      String
+  variable  String   @db.Text
+  status    String   @default("Свободно")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("sessions")
+}
+
+model TranslationTitle {
+  id                  Int      @id @default(autoincrement())
+  title               String
+  status              String   @default("Нужен перевод")
+  totalChapters       Int      @default(0) @map("total_chapters")
+  translatedChapters  Int      @default(0) @map("translated_chapters")
+  fileName            String?  @map("file_name")
+  fileCharCount       Int?     @map("file_char_count")
+  fileWordCount       Int?     @map("file_word_count")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@map("translation_titles")
+}
