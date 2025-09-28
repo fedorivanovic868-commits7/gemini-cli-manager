@@ -53,7 +53,7 @@ export function SessionsTab() {
       } else {
         toast.error('Ошибка загрузки сессий');
       }
-    } catch (error) {
+    } catch {
       toast.error('Ошибка загрузки сессий');
     } finally {
       setIsLoading(false);
@@ -82,7 +82,7 @@ export function SessionsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка создания сессии');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при создании сессии');
     }
   };
@@ -114,7 +114,7 @@ export function SessionsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка обновления сессии');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при обновлении сессии');
     }
   };
@@ -136,7 +136,7 @@ export function SessionsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка удаления сессии');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при удалении сессии');
     }
   };
@@ -161,7 +161,7 @@ export function SessionsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка обновления статуса');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при обновлении статуса');
     }
   };
@@ -195,7 +195,7 @@ export function SessionsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка экспорта сессии');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при экспорте сессии');
     }
   };
@@ -227,7 +227,7 @@ export function SessionsTab() {
       } else {
         toast.error(result.error || 'Ошибка импорта сессии');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при импорте сессии');
     }
   };

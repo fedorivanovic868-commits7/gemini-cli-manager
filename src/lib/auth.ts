@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
 
 const AUTH_COOKIE_NAME = 'auth-session';
 const AUTH_COOKIE_VALUE = 'authenticated';

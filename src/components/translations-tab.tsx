@@ -24,7 +24,6 @@ import {
 import { toast } from 'sonner';
 import { Plus, BookOpen, Edit, Trash2, File, BarChart3 } from 'lucide-react';
 import type { TranslationTitle } from '@/lib/db';
-import { formatReadingTime } from '@/lib/file-analyzer';
 
 export function TranslationsTab() {
   const [translations, setTranslations] = useState<TranslationTitle[]>([]);
@@ -53,7 +52,7 @@ export function TranslationsTab() {
       } else {
         toast.error('Ошибка загрузки переводов');
       }
-    } catch (error) {
+    } catch {
       toast.error('Ошибка загрузки переводов');
     } finally {
       setIsLoading(false);
@@ -86,7 +85,7 @@ export function TranslationsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка создания тайтла');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при создании тайтла');
     }
   };
@@ -121,7 +120,7 @@ export function TranslationsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка обновления тайтла');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при обновлении тайтла');
     }
   };
@@ -143,7 +142,7 @@ export function TranslationsTab() {
         const error = await response.json();
         toast.error(error.error || 'Ошибка удаления тайтла');
       }
-    } catch (error) {
+    } catch {
       toast.error('Произошла ошибка при удалении тайтла');
     }
   };
