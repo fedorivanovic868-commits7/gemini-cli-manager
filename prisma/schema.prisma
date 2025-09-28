@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-// Updated to use PRISMA_DATABASE_URL (Accelerate) - fix duplicate env vars
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
@@ -9,10 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Define database connection via the `DATABASE_URL` env var
 datasource db {
   provider = "postgresql"
-  url      = env("PRISMA_DATABASE_URL")
-  directUrl = env("POSTGRES_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Session {
